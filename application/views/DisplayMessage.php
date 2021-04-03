@@ -22,6 +22,7 @@ $SMS_Date = $messageData->SMS_Date;
 $res_Fname = $messageData->res_Fname;
 $res_Lname = $messageData->res_Lname;
 $Keyword_desc = $messageData->Keyword_desc;
+$SMS_ID = $messageData->SMS_ID;
 ?>
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -68,8 +69,7 @@ $Keyword_desc = $messageData->Keyword_desc;
 
 									<div class="col-md-12">
 										<div class="form-group text-right">
-											<a class="btn btn-primary" id="button" title="Process" href="<?php echo base_url(); ?>form">Process</a>
-											<a class="btn btn-primary" id="button" title="Reply" href="<?php echo base_url(); ?>compose">Reply</a>
+											<a class="btn btn-primary" id="button" title="Process" href="<?php echo base_url().'form/'.$SMS_ID; ?>">Process</a>
 											<!--<button type="submit" value="process">Process</button>
 											<button type="submit" value="compose">Reply</button>-->
 										</div>

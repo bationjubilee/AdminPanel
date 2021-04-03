@@ -113,4 +113,6 @@ $route['DisplayMessage/(:num)'] = 'sms/DisplayMessage/$1';
 //complaint route
 $route['compose'] = 'sms';
 $route['noticeHearing'] = 'sms/noticeOfHearing';
-$route['form'] = 'sms/complaint_form';
+$route['form'] = 'sms/form';
+$route['form/(:num)'] = 'sms/form/$1';
+$route['sending'] = 'sms/sending';

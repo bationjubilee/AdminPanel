@@ -98,22 +98,70 @@ class Sms_model extends CI_Model
     {
        $this->db->select('inCharge_ID, inCharge_person');
        $this->db->from('incharge');
-       $this->db->where('inCharge_ID !=', 0);
+       $this->db->where('inCharge_ID !=', 0 );
        $querys = $this->db->get();
 
        return $querys->result();
 
     }
 
+    public function get_incharge_id($inchargeID)
+    {
+       $this->db->select('schedule_ID');
+       $this->db->from('schedule');
+       $this->db->where('inCharge_ID =', $inchargeID);
+       $querys = $this->db->get();
+
+       return $querys->result();
+
+    }
+
+    public function get_status(){
+       $this->db->select('Status_ID, Status_desc');
+       $this->db->from('status');
+       $this->db->where('Status_ID !=',0);
+       $query = $this->db->get();
+
+       return $query->result();
+    }
+
+
+
+    
+
+
     function fetch_formDisplay($smsID)
     {
-      $this->db->select('SMS_ID, Message, res_id, res_Fname, res_Lname, Keyword_desc');  
+      $this->db->select('sms.SMS_ID, sms.Message, resident.res_id, resident.res_Fname, resident.res_Lname, sms_keyword.Keyword_desc');  
       $this->db->from('sms');
       $this->db->join('sms_keyword', 'sms_keyword.SMS_Keyword_ID=sms.SMS_Keyword_ID');
       $this->db->join('resident', 'resident.res_id=sms.res_id');
       $this->db->where('SMS_ID =',$smsID);  
       $query = $this->db->get();  
       return $query->row();
+    }
+
+
+        
+    function complain_form($complain_info )
+    {
+        $this->db->trans_start();
+        $this->db->insert('complaint', $complain_info );
+        
+        $insert_id = $this->db->insert_id();
+        
+        $this->db->trans_complete();
+        
+        return $insert_id;
+    }
+
+    function get_days()
+    {
+      $this->db->select('days');
+      $this->db->from('working_days');
+      $this->db->where('work_id != ',0);
+      $query = $this->db->get();
+      return $query->result();
     }
 
 }

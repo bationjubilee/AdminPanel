@@ -1,4 +1,4 @@
-
+0
 <?php
 $SMS_ID = $complaintData->SMS_ID;
 $res_id = $complaintData->res_id;
@@ -6,10 +6,12 @@ $res_Fname = $complaintData->res_Fname;
 $res_Lname = $complaintData->res_Lname;
 $Keyword_desc = $complaintData->Keyword_desc;
 $Message = $complaintData->Message;
-$settle_date = $complaintData->settle_date;
+// $schedule_ID = $complaintData->schedule_ID;
+// $status = $complaintData->Status_desc;
+//$settle_date = $complaintData->settle_date;
+
 
 ?>
-
 <div class="content-wrapper">
 
 	<section class="content-header">
@@ -18,9 +20,9 @@ $settle_date = $complaintData->settle_date;
   
 	<section class="content">	
 		<div class="row">		
-				<form role="form"  action="<?php echo base_url() ?>" method="post" role="form">	
+				<form role="form" id="form" action="<?php echo base_url() ?>sms/addComplaint" method="post" role="form">	
 					<div class="row">
-						<div class="col-md-8" >
+					070	<div class="col-md-8" >
 							<div class="row" style="float:right; margin-top:4%;">
 								<div class="col-md-5">
 									<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal" style="margin-top:15px;">Add Complainant</button>
@@ -77,40 +79,64 @@ $settle_date = $complaintData->settle_date;
 												<div class="col-md-6" >
 													<label for="date filed" >Made this day of:</label>
 													<div class="form-group">
-														<input type="text" name="date_process" id="demo" style="margin-top:15px; outline: none; border: 0; font-size: 20px;" disabled="disabled">
-															<!--<p id="demo" style="margin-top:15x;"></p>-->
+														<input type="text" class="form-control" name="date_process" id="demo" style="margin-top:15px; outline: none; border: 0; font-size: 20px;">
 													</div>
 												</div>											
 										</div>
 										<br>
 										<br>
 										<div class="row">
-											<div class="col-md-6">
+											<div class="col-md-3">
 												<label for="complaint">SMS ID No.</label>
 												<div class="form-group">
-													<input type="text" name="SMS_ID" disabled="disabled" style="width: 70px; height: 40px;" value="<?php echo $SMS_ID; ?>">
+													<input type="text" name="SMS_ID" class="form-control"  style="width: 70px; height: 40px;" value="<?php echo $SMS_ID; ?>">
 												</div>
 											</div>
-											<div class="col-md-6">
-												<label for="rights">Resident ID No.</label>
+											<div class="col-md-3">
+												
 												<div class="form-group">
-													<input type="text" name="res_id" disabled="disabled" style="width: 70px; height: 40px;" value="<?php echo $res_id; ?>">
+													<input type="hidden" name="res_id" type="hidden" class="form-control" style="width: 70px; height: 40px;" value="<?php echo $res_id; ?>">
 												</div>
-											</div>								
+											</div>	
+											<div class="col-md-6">
+												<label for="Status_desc">Select for Settlement status</label>
+												<div class="form-group">
+													<select class="form-control required" id="Status_ID" name="Status_desc">
+														<?php
+														if(!empty($status))
+														{
+															foreach ($status as $the_status)
+															{
+																?>
+																<option value="<?php echo $the_status->Status_ID; ?>" 
+																<?php if($the_status->Status_ID == set_value('Status_desc')) {echo "selected=selected";} ?>>
+																<?php echo $the_status->Status_desc;?>
+																</option>
+
+																<?php
+															}
+														}
+														?>
+													</select>
+												</div>	
+											</div> 
+										</div> 	
+																		
 										</div>
 										<br>
 										<br>
 										<div class="row">
 											<div class="col-md-6">
-												<label for="complaint">Complainant's Name</label>
+												<label for="complaint" style="margin-left: 10px;">Complainant's Name</label>
 												<div class="form-group">
-													<input type="text" name="res_name" disabled="disabled" style="width: 220px; height: 30px;" value="<?php echo $res_Fname; ?><?php echo $res_Lname ?>">
+													<input type="text" class="form-control" name="res_name"
+													 style="width: 220px; height: 30px; margin-left: 10px;" value="<?php echo $res_Fname; ?> <?php echo $res_Lname ?>">
 												</div>
 											</div>
 											<div class="col-md-6">
 												<label for="rights">Category Description</label>
 												<div class="form-group">
-													<input type="text" name="Keyword_desc" disabled="disabled" style="width: 220px; height: 30px;" value="<?php echo $Keyword_desc; ?>">
+													<input type="text" class="form-control" name="Keyword_desc" style="width: 220px; height: 30px;" value="<?php echo $Keyword_desc; ?>">
 												</div>
 											</div>								
 										</div>
@@ -124,16 +150,17 @@ $settle_date = $complaintData->settle_date;
 										</div>
 										<br><br>
 										<div class="row">
-											<div class="col-md-6" >
-												<label for="Keyword)desc">Settlement Schedule</label>
+											<div class="col-md-5" >
+												<label for="Keyword_desc" style="margin-left: 20px;">Settlement Schedule</label>
 												<div class="form-group">
-													<input type="text" name="settle_date" disabled="disabled" style="width: 220px; height: 30px;" value="<?php echo $settle_date; ?>">
+													<input type="text" class="form-control" name="settle_date" style="width: 220px; height: 30px; margin-left: 20px; outline: none; border: 0;" id="set_date">
+													<p id="day"></p>
 												</div>	
 											</div>										
 											<div class="col-md-6">
 												<label for="inCharge_person">Select for Settlement Incharge</label>
 												<div class="form-group">
-													<select class="form-control required" id="inCharge_ID" name="inCharge_person"  style="border-radius: 10px;margin-top:15px;">
+													<select class="form-control required" id="inCharge_ID" name="inCharge_person" >
 														<option value="0">Select incharge</option>
 														<?php
 														if(!empty($incharge))
@@ -153,18 +180,20 @@ $settle_date = $complaintData->settle_date;
 													</select>
 												</div>	
 											</div> 
-										</div> 	
-										<div class="row" style="float:right">
+											<div class="row" style="float:right; margin:2%">
 											<div class="form-group">
 												<div class="col-md-5" >
-													<button name="cancel" type="button" class="btn btn-default btn-sm" >Cancel</button>
+													<input type="reset" name="cancel" class="btn btn-default btn-sm" value="Cancel"/>
 												</div>
 												<div class="col-md-5" >
-													<button name="submit" type="button" class="btn btn-success btn-sm" >Submit</button>
+													<input type="submit" name="save" class="btn btn-success btn-sm" value="Save"/>
 												</div>
-											</div>
-														
+											</div>	
+																					
 										</div>	
+										</div> 	
+										
+										
 									<!-- box-body -->
 									</div>
 								</div>
@@ -181,43 +210,57 @@ $settle_date = $complaintData->settle_date;
 
 <script type='text/javascript'>
 var d = new Date();
+var dn = new Date();
+var weekday = new Array(7);
+  weekday[0] = "Sunday";
+  weekday[1] = "Monday";
+  weekday[2] = "Tuesday";
+  weekday[3] = "Wednesday";
+  weekday[4] = "Thursday";
+  weekday[5] = "Friday";
+  weekday[6] = "Saturday";
+  
 d = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
 //document.getElementById("demo").innerHTML = d;
 document.getElementById("demo").value = d;
+
+dns = dn.getDate() + 3;
+function get_dateFormat(dns) {
+	var dn = new Date();
+	dn.setDate(dns); 
+	var month = "0"+(dn.getMonth()+1);
+	var date = "0"+dn.getDate(); 
+	month = month.slice(-2); 
+	date = date.slice(-2);
+	//var get_day = weekday[dn.getDay()];
+	var date = dn.getFullYear() + "/" + month + "/" + date + "    " + get_dayFormat(dns);
+	return date;
+}
+
+function get_dayFormat(dns) {
+	var dn = new Date();
+	dn.setDate(dns); 
+	var get_day = weekday[dn.getDay()];
+	return get_day;
+} 
+
+if(get_dayFormat(dns) == "Saturday") {
+	dns = dn.getDate() + 5;
+	document.getElementById("set_date").value = get_dateFormat(dns);
+}
+else if(get_dayFormat(dns) == "Sunday") {
+	dns = dn.getDate() + 4;
+	document.getElementById("set_date").value = get_dateFormat(dns);
+}
+else{
+	document.getElementById("set_date").value = get_dateFormat(dns);
+}
+ 
 </script>
 
-<script type='text/javascript'>
-	var x = Date()
-    $(document).ready(function(){
-
-     // Initialize 
-     $( "#autouser" ).autocomplete({
-
-        source: function( request, response ) {
-          // Fetch data
-          $.ajax({
-            url: "<?=base_url()?>index.php/Sms/residentlist",
-            type: 'post',
-            dataType: "json",
-            data: {
-              search: request.term
-            },
-            success: function( data ) {
-              response( data );
-            }
-          });																																																																																																																																																																																																								
-        },
-
-		
-        select: function (event, ui) {
-          // Set selection
-          $('.autouser').val(ui.item.label); 
-		//   $('#userid').val(ui.item.address);// display the selected text
-          return false;
-        }
-		
-      });
-	  
-
-    });
-    </script>
+<?php 
+function getsched()
+{
+	
+}
+?>
