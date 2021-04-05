@@ -155,11 +155,23 @@ class Sms_model extends CI_Model
         return $insert_id;
     }
 
-    function get_days()
+    function get_time()
     {
-      $this->db->select('days');
-      $this->db->from('working_days');
-      $this->db->where('work_id != ',0);
+      $this->db->select('time.day_time,time.time_id');
+      $this->db->from('time');
+      $this->db->where('time.time_id != ',0);
+      $query = $this->db->get();
+      return $query->row();
+    }
+
+    function getsched_details()
+    {
+      $this->db->select('schedules.schedules_id,incharge.incharge_person, schedules.incharge_id, schedules.work_id,  working_days.days, incharge.role');
+      $this->db->from('schedules');
+      $this->db->join('working_days', 'working_days.work_id=schedules.work_id');
+      $this->db->join('incharge', 'incharge.incharge_id=schedules.incharge_id');
+      $this->db->where('schedules_id !=', 0);
+
       $query = $this->db->get();
       return $query->result();
     }

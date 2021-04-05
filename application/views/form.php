@@ -1,4 +1,4 @@
-0
+
 <?php
 $SMS_ID = $complaintData->SMS_ID;
 $res_id = $complaintData->res_id;
@@ -6,10 +6,12 @@ $res_Fname = $complaintData->res_Fname;
 $res_Lname = $complaintData->res_Lname;
 $Keyword_desc = $complaintData->Keyword_desc;
 $Message = $complaintData->Message;
+$day_time = $time_data->day_time;
+$time_id = $time_data->time_id;
+//$incharge_person = $datas->incharge_person;
 // $schedule_ID = $complaintData->schedule_ID;
 // $status = $complaintData->Status_desc;
 //$settle_date = $complaintData->settle_date;
-
 
 ?>
 <div class="content-wrapper">
@@ -22,7 +24,7 @@ $Message = $complaintData->Message;
 		<div class="row">		
 				<form role="form" id="form" action="<?php echo base_url() ?>sms/addComplaint" method="post" role="form">	
 					<div class="row">
-					070	<div class="col-md-8" >
+						<div class="col-md-8" >
 							<div class="row" style="float:right; margin-top:4%;">
 								<div class="col-md-5">
 									<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal" style="margin-top:15px;">Add Complainant</button>
@@ -151,7 +153,7 @@ $Message = $complaintData->Message;
 										<br><br>
 										<div class="row">
 											<div class="col-md-5" >
-												<label for="Keyword_desc" style="margin-left: 20px;">Settlement Schedule</label>
+												<label for="schedules" style="margin-left: 20px;">Settlement Schedule</label>
 												<div class="form-group">
 													<input type="text" class="form-control" name="settle_date" style="width: 220px; height: 30px; margin-left: 20px; outline: none; border: 0;" id="set_date">
 													<p id="day"></p>
@@ -160,17 +162,17 @@ $Message = $complaintData->Message;
 											<div class="col-md-6">
 												<label for="inCharge_person">Select for Settlement Incharge</label>
 												<div class="form-group">
-													<select class="form-control required" id="inCharge_ID" name="inCharge_person" >
+													<select class="form-control required" id="inCharge_ID" name="incharge_person" >
 														<option value="0">Select incharge</option>
 														<?php
-														if(!empty($incharge))
+														if(!empty($sched_data))
 														{
-															foreach ($incharge as $the_incharge)
+															foreach ($sched_data as $the_incharge)
 															{
 																?>
-																<option value="<?php echo $the_incharge->inCharge_ID; ?>" 
-																<?php if($the_incharge->inCharge_ID == set_value('inCharge_person')) {echo "selected=selected";} ?>>
-																<?php echo $the_incharge->inCharge_person;?>
+																<option value="<?php echo $the_incharge->schedules_id; ?>" 
+																<?php if($the_incharge->schedules_id == set_value('incharge_person')) {echo "selected=selected";} ?>>
+																<?php echo $the_incharge->incharge_person;?>
 																</option>
 
 																<?php
@@ -179,6 +181,17 @@ $Message = $complaintData->Message;
 														?>
 													</select>
 												</div>	
+											</div>
+											<div class="row">
+												<div class="col-md-5" >
+												<label for="time" style="margin-left: 40px;">Time:  </label>
+												<div class="form-group">
+													<input type="text" class="form-control" name="settle_date" style="width: 220px; height: 30px; margin-left: 40px; outline: none; border: 0;" id="set_date" value="<?php echo $day_time; ?>">
+												</div>
+												<div class="form-group">
+													<input type="hidden" name="time_id" class="form-control" style="width: 70px; height: 40px;" value="<?php echo $time_id; ?>">
+												</div>	
+											</div>
 											</div> 
 											<div class="row" style="float:right; margin:2%">
 											<div class="form-group">
@@ -222,6 +235,7 @@ var weekday = new Array(7);
   
 d = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
 //document.getElementById("demo").innerHTML = d;
+//var b = <?php //echo getsched(); ?>;
 document.getElementById("demo").value = d;
 
 dns = dn.getDate() + 3;
@@ -261,6 +275,8 @@ else{
 <?php 
 function getsched()
 {
-	
+	$a = $datas->incharge_person;
+	return $a;
 }
+
 ?>

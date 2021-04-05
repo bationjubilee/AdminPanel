@@ -125,8 +125,9 @@ class Sms extends BaseController{
     {
         $data['status'] = $this->Sms_model->get_status();
        
-        $data['complaintData'] = $this->Sms_model->fetch_formDisplay($smsID);  
-
+        $data['complaintData'] = $this->Sms_model->fetch_formDisplay($smsID); 
+        $data['sched_data'] =  $this->Sms_model->getsched_details(); 
+        $data['time_data'] = $this->Sms_model->get_time();
         $this->global['pageTitle'] = 'Barangay : complaint form';
         $this->loadViews("form", $this->global, $data, NULL);
 
@@ -177,6 +178,16 @@ class Sms extends BaseController{
         }
         return $counter;
     }
+
+    function settle_dateQuery(){
+        $data['datas'] = $this->Sms_model->getsched_details();
+        return $data;
+        $this->global['pageTitle'] = 'Barangay : complaint form';
+        $this->loadViews("form", $this->global, $data, NULL);
+
+    }
+
+
 
 
 
