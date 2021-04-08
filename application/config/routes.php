@@ -117,4 +117,4 @@ $route['form'] = 'sms/form';
 $route['form/(:num)'] = 'sms/form/$1';
 $route['sending'] = 'sms/sending';
 $route['settle_dateQuery'] = 'sms/settle_dateQuery';
-
+$route['message'] = 'sms/messages';

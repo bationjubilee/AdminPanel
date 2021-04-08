@@ -20,30 +20,30 @@ class Sms_model extends CI_Model
 //---------------INBOX---------------------------------------------
    function fetch_Catinbox()
    {
-    $this->db->select("SMS_ID, Message, SMS_Date");
+    $this->db->select("SMS_ID, message, timestamp");
     $this->db->from("sms");
     $this->db->where("SMS_Keyword_ID BETWEEN 1 AND 5 AND res_id !=0");
-    $this->db->order_by('SMS_Date ASC');
+    $this->db->order_by('timestamp ASC');
     $query = $this->db->get();
     return $query->result();
    }
 
    function fetch_UnCatinbox()
    {
-    $this->db->select("SMS_ID, Message, SMS_Date");
+    $this->db->select("SMS_ID, message, timestamp");
     $this->db->from("sms");
     $this->db->where("SMS_Keyword_ID = 0 AND res_id != 0");
-    $this->db->order_by('SMS_Date ASC');
+    $this->db->order_by('timestamp ASC');
     $query = $this->db->get();
     return $query->result();
    }
 
    function fetch_Anoninbox()
    {
-    $this->db->select("res_id, SMS_ID, Message, SMS_Date");
+    $this->db->select("res_id, SMS_ID, message, timestamp");
     $this->db->from("sms");
     $this->db->where('res_id =', 0);
-    $this->db->order_by('SMS_Date ASC');
+    $this->db->order_by('timestamp ASC');
     $query = $this->db->get();
     return $query->result();
    }
@@ -51,7 +51,7 @@ class Sms_model extends CI_Model
 
    function fetch_messageDisplay($smsID)  
     { 
-     $this->db->select('SMS_ID, MobileNo, Message, SMS_Date, res_Fname, res_Lname, Keyword_desc');  
+     $this->db->select('SMS_ID, originator, message, timestamp, res_Fname, res_Lname, Keyword_desc');  
      $this->db->from('sms');
      $this->db->join('sms_keyword', 'sms_keyword.SMS_Keyword_ID=sms.SMS_Keyword_ID');
      $this->db->join('resident', 'resident.res_id=sms.res_id');
@@ -125,10 +125,7 @@ class Sms_model extends CI_Model
        return $query->result();
     }
 
-
-
-    
-
+   
 
     function fetch_formDisplay($smsID)
     {
@@ -140,6 +137,7 @@ class Sms_model extends CI_Model
       $query = $this->db->get();  
       return $query->row();
     }
+    
 
 
         
@@ -175,6 +173,67 @@ class Sms_model extends CI_Model
       $query = $this->db->get();
       return $query->result();
     }
+
+    //--------------------------SMS DATA PROCESS----------------------------------
+     function getSave($savedata)
+ {
+  $this->db->insert('sms', $savedata);
+  $insert_id = $this->db->insert_id();
+  return $insert_id;
+ }
+
+function fetch_sms()
+{
+  $this->db->select('gateway');
+  $this->db->from('sms');
+  $this->db->where('SMS_ID !=', 0);
+  $query = $this->db->get();  
+  return $query->result();
+}
+  
+    function fetch_data()  
+    {  
+     //$query = $this->db->get("tbl_user");  
+     //select * from tbl_user  
+     //$query = $this->db->query("SELECT * FROM tbl_user ORDER BY id DESC");  
+     $this->db->select("SMS_Keyword_ID, Keyword_desc");  
+     $this->db->from("sms_keyword");
+     $this->db->where('SMS_Keyword_ID !=', -1);  
+     $query = $this->db->get();  
+     return $query->result();  
+    }
+
+    function isKeyworExist($keyword)  
+    {
+        return $this->db
+        ->select('SMS_Keyword_ID, Keyword_desc')
+        ->from('sms_keyword')
+        ->like('Keyword_desc', $keyword)
+        ->get()
+        ->result();
+    }
+
+    function isMobileExist()
+    {
+      return $this->db
+      ->select('mobile_no, res_id')
+      ->from('resident')
+      ->where('res_id !=', 0)
+      ->get()
+      ->result();
+    }
+
+
+
+// --------------------------------------------setlle date----------------------------------------------------
+    
+
+
+
+    
+
+
+
 
 }
 

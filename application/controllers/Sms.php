@@ -20,46 +20,138 @@ class Sms extends BaseController{
 
         $this->loadViews("compose", $this->global, NULL, NULL);
     }
-
-  
-
-    public function sending(){
-        if ($this->input->post('submit')) {
-          $name = $this->input->post('res_name');
-          $number = $this->input->post('mobile_no');
-          $keyword = $this->input->post('Keyword_desc');
-          $message = $this->input->post('Message');
-          $date = $this->input->post('settle_date');
-          $api = "TR-JUBIL430719_33K7W";
-          $passwd = '5r32[3p%$m';
-          $text = $name." :   the complaint you sent is this: ".$message;
-          $att = "hello trish baho";
-
-          //echo $text;
-          
-
-          $result = $this->itexmo($number,$att,$api,$passwd);
-          if ($result == ""){
-            echo "iTexMo: No response from server!!!
-            Please check the METHOD used (CURL or CURL-LESS). If you are using CURL then try CURL-LESS and vice versa.  
-            Please CONTACT US for help. ";  
-          }else if ($result == 0){
-            echo "Message Sent!";
-          }
-          else{ 
-            echo "string". "Error Num ". $result . " was encountered!";
-          }
-                
-        }else{
-
-        }
-
-        $this->loadViews("compose", $this->global, NULL, NULL);
+    
+########---TO REFRESH AND CATEGORIZE NEW SMS---------###########
+    public function messages(){
+        $this->global['pageTitle'] = 'Barangay : Resident Registration';
+        $data = $this->parsedataCAT();
+        $this->loadViews("message", $this->global, $data, NULL);
     }
 
-    function itexmo($number,$message,$apicode,$passwd){
+############------SMS PROCESS-------------###################
+
+    function parsemessage($originator,$gateway,$message,$timestamp)
+    {
+        
+        $extractFirstLine = explode("\n", $message);
+        $messageArr = explode(' ', $extractFirstLine[0]);
+        $keyword = preg_replace('/\s+/', '', $messageArr[0]);
+
+        $resultingKeyword = $this->Sms_model->isKeyworExist($keyword);
+        $resultKeyNum = $resultingKeyword[0]->SMS_Keyword_ID;
+
+        $res_id = $this->confirmMobile($originator);
+
+        echo $res_id;
+        print "<br/>";
+        echo $resultKeyNum;
+
+        if (empty($resultingKeyword)) {
+            $this->passCat(
+                $originator,
+                $message,
+                0,
+                $res_id,
+                $gateway,
+                $timestamp
+            );
+
+        } else {
+            $this->passCat(
+            $originator,
+            $message,
+            $resultKeyNum,
+            $res_id,
+            $gateway,
+            $timestamp
+            );
+
+
+            }
+            $this->getVal_keyNum($resultKeyNum,$res_id,$originator);  
+        
+    }
+    public function parsedataCAT()
+    {
+        $JSON = file_get_contents('https://www.itexmo.com/php_api/display_messages.php?apicode=DE-JUBIL430719_XQR53');
+        $CONVERTED = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $JSON);
+        $jsonVar = json_decode($CONVERTED, TRUE);
+
+
+         foreach ($jsonVar as $data){  
+          if (count($data) == 4){ // skip yung result
+             $originator = $data['originator'];
+             $gateway = $data['message_id'];
+             $message = $data['message'];
+             $timestamp = $data['timestamp'];
+
+             $varVerify = $this->verify_repeat($gateway);
+
+             if ($varVerify == false) {
+                $this->parsemessage($originator,$gateway,$message,$timestamp);
+
+             }else{
+            
+             }
+
+           } 
+         }
+
+        }
+    
+
+    function passCat($originator,$message,$SMS_Keyword_ID,$res_id,$gateway,$timestamp){
+        $savedata = array('originator' =>$originator, 'message' =>$message, 'SMS_Keyword_ID' =>$SMS_Keyword_ID, 'res_id' =>$res_id, 'gateway' => $gateway, 'sms_statusID' => 0, 'timestamp' => $timestamp);
+        $this->Sms_model->getSave($savedata);
+
+    }
+
+    function confirmMobile($originator)
+    {
+        $mobileReturn = 0;
+        $counter = 'FALSE';
+        $mobileArr = $this->Sms_model->isMobileExist();
+        foreach ($mobileArr as $mob) {
+                if (strpos($originator, $mob->mobile_no) !== false) {
+                    $mobileReturn = $mob->res_id;
+                    $counter = 'TRUE';
+                    break;
+                }
+                else{
+                    $counter = 'FALSE'; 
+                }
+        }
+
+        return $mobileReturn;
+    }
+
+    function verify_repeat($gateway)
+    {
+        $counter = false;
+        $message_id = $this->Sms_model->fetch_sms();
+        $a = json_encode($message_id);
+        
+        foreach ($message_id as $id) {
+            $b  = $id->gateway;
+            if($gateway == $b){
+                $counter = true;
+                break;
+            }else{
+                
+                $counter = false;
+            }
+        }
+        return $counter;
+    }
+
+    function saveMessageData()
+    {
+
+    }
+
+    function itexmo($number,$messages,$apicode,$passwd){
         $url = 'https://www.itexmo.com/php_api/api.php';
-        $itexmo = array('1' => $number, '2' => $message, '3' => $apicode, 'passwd' => $passwd);
+        $itexmo = array('1' => $number, '2' => $messages, '3' => $apicode, 'passwd' => $passwd);
         $param = array(
           'http' => array(
             'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
@@ -70,14 +162,45 @@ class Sms extends BaseController{
         $context  = stream_context_create($param);
         return file_get_contents($url, false, $context);
     }
-      
 
+    function send_reply($originator){
+        $number = $originator;
+        $msg = "Ang kini nga mensahe nagpahibalo nga imong number wala pa na rehistro sa system sa barangay o dili mao ang keyword sa imong reklamo. 
+        Mamahimo nga iparehistro usa imong number o itarong ang format sa imong reklamo.
+        1. Sa unang linya mao ang keyword
+        2. Sunod na mga linya mao na imong reklamo. 
+        Ang mga mosunod mao ang keyword na imong gamiton:
+        Peace and Order
+        Land Problems
+        Health and Sanitation
+        VAWC
+        Environment";
+        $api = "DE-JUBIL430719_XQR53";
+        $passwd = 'j#%zjl{}i(';
 
-    // public function form(){
-    //     $this->global['pageTitle'] = 'Barangay : report form';
-    //     $this->loadViews("form", $this->global, NULL, NULL); 
-    // }
+        $result = $this->itexmo($number,$msg,$api,$passwd);
+        if ($result == ""){
+        echo "iTexMo: No response from server!!!
+        Please check the METHOD used (CURL or CURL-LESS). If you are using CURL then try CURL-LESS and vice versa.  
+        Please CONTACT US for help. ";  
+        }else if ($result == 0){
+            echo "Message Sent!";
+        }
+        else{ 
+            echo "string". "Error Num ". $result . " was encountered!";
+        }
+    }
 
+    function getVal_keyNum($key,$num,$originator){
+        if ($key == 0 || $num == 0){
+            $this->send_reply($originator);
+        }else{
+
+        }
+    }
+  
+
+################----CATEGORIZED SMS----------##################
     public function noticeOfHearing(){
         $this->global['pageTitle'] = 'Barangay : report form';
         $this->loadViews("noticeHearing", $this->global, NULL, NULL); 
@@ -107,6 +230,8 @@ class Sms extends BaseController{
         $this->global['pageTitle'] = 'Barangay : Message Information';
         $this->loadViews("DisplayMessage", $this->global, $result, NULL);
     }
+
+    
 
     //--------------------------------COMPLAINT PROCESS---------------------------
 
@@ -141,8 +266,9 @@ class Sms extends BaseController{
         $settle_date = $this->input->post("settle_date");
         $date_process =$this->input->post("date_process");
         $Status_ID = $this->input->post('Status_desc');
+        $time_id = $this->input->post('time_id');
         
-        $complain_info = array('SMS_ID'=>$SMS_ID, "res_id"=>$res_id,"Keyword_desc"=>$Keyword_desc, "settle_date"=>$settle_date,"date_process"=>$date_process,'Status_ID'=>$Status_ID);
+        $complain_info = array('SMS_ID'=>$SMS_ID, "res_id"=>$res_id,"Keyword_desc"=>$Keyword_desc, "settle_date"=>$settle_date,"date_process"=>$date_process,'Status_ID'=>$Status_ID, 'time_id'=>$time_id);
 
         $result = $this->Sms_model->complain_form($complain_info);
 
@@ -186,6 +312,19 @@ class Sms extends BaseController{
         $this->loadViews("form", $this->global, $data, NULL);
 
     }
+
+//-----------------------schedules -----------------------------------------------------------------------------
+
+function get_displayDate(){
+    $settle_date = $this->input->post('settle_date');
+    $settle_day = $this->input->post('days_display');
+
+
+    $settle_info = array('settle_date'=>$settle_info, 'days_display'=>$settle_day);
+}
+    
+
+
 
 
 

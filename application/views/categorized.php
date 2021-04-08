@@ -1,5 +1,6 @@
 <div class="content-wrapper">
     <section class="content">
+    
 	<div class="row">
             <div class="col-xs-12">
               <div class="box">
@@ -22,8 +23,8 @@
                         {
                     ?>
                     <tr>
-                        <td><?php echo $record->Message; ?></td>
-                        <td><?php echo $record->SMS_Date; ?></td>
+                        <td><?php echo $record->message; ?></td>
+                        <td><?php echo $record->timestamp; ?></td>
                         <?php  
                         if($role == ROLE_ADMIN)
                         {

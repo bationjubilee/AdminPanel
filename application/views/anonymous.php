@@ -22,8 +22,8 @@
                         {
                     ?>
                     <tr>
-                        <td><?php echo $record->Message; ?></td>
-                        <td><?php echo $record->SMS_Date; ?></td>
+                        <td><?php echo $record->message; ?></td>
+                        <td><?php echo $record->timestamp; ?></td>
                         <?php  
                         if($role == ROLE_ADMIN)
                         {

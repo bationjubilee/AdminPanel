@@ -95,7 +95,6 @@
                   <!-- Menu Footer-->
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="<?php echo base_url(); ?>profile" class="btn btn-warning btn-flat"><i class="fa fa-user-circle"></i> Profile</a>
                     </div>
                     <div class="pull-right">
                       <a href="<?php echo base_url(); ?>logout" class="btn btn-default btn-flat"><i class="fa fa-sign-out"></i> Sign out</a>
@@ -131,8 +130,15 @@
                 <span>Compose Message</span>
               </a>
             </li>        
+            <li>
+              <a href="<?php echo base_url(); ?>message" >
+              <i class="fa fa-envelope"></i> 
+              <span>Messages</span>
+
+              </a>
+            </li>  
             
-            <li class="treeview">
+            <!-- <li class="treeview">
               <a href="#">
                 <i class="fa fa-envelope"></i> <span>Messages</span>
                 <span class="pull-right-container">
@@ -140,11 +146,11 @@
                 </span>
               </a>
               <ul class="treeview-menu">
-                <li><a href="<?php echo base_url();?>categorized" name="cat">Categorized</a></li>
-                <li><a href="<?php echo base_url(); ?>uncategorized" name="uncat">Uncategorized</a></li>
-                <li><a href="<?php echo base_url(); ?>anonymous" name="ano">Anonymous</a></li>
+                <li><a href="<?php //echo base_url();?>categorized" name="cat">Categorized</a></li>
+                <li><a href="<?php// echo base_url(); ?>uncategorized" name="uncat">Uncategorized</a></li>
+                <li><a href="<?php //echo base_url(); ?>anonymous" name="ano">Anonymous</a></li>
               </ul>
-            </li>
+            </li> -->
 
             <li class="treeview">
               <a href="#">

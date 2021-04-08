@@ -57,15 +57,23 @@ $add_id = $residentInfo->add_id;
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                    <label for="gender">Gender</label>                                
                                     <div class="form-group">
-                                        <label for="gender">Gender</label>
-                                        <input type="text" class="form-control" id="gender" placeholder="Gender" name="gender" value="<?php echo $gender ?>" maxlength="20">
+                                        <select name="gender" id="gender">
+                                            <option value="female">Female</option>
+                                            <option value="male">Male</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                    <label for="status">Status</label>                                
                                     <div class="form-group">
-                                        <label for="status">Status</label>
-                                        <input type="text" class="form-control" id="status" placeholder="Status" name="status" value="<?php echo $status ?>" maxlength="20">
+                                        <select name="status" id="status">
+                                            <option value="single">Single</option>
+                                            <option value="married">Married</option>
+                                            <option value="widowed">Widowed</option>
+                                            <option value="separated">Separated</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -137,3 +145,9 @@ $add_id = $residentInfo->add_id;
 </div>
 
 <script src="<?php echo base_url(); ?>assets/js/editResident.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+  document.getElementById('gender').value = "<?php echo $_GET['gender'];?>";
+  document.getElementById('status').value = "<?php echo $_GET['status'];?>";
+
+</script>

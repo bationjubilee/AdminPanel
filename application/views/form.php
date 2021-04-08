@@ -97,7 +97,7 @@ $time_id = $time_data->time_id;
 											<div class="col-md-3">
 												
 												<div class="form-group">
-													<input type="hidden" name="res_id" type="hidden" class="form-control" style="width: 70px; height: 40px;" value="<?php echo $res_id; ?>">
+													<input type="hidden" name="res_id" class="form-control" style="width: 70px; height: 40px;" value="<?php echo $res_id; ?>">
 												</div>
 											</div>	
 											<div class="col-md-6">
@@ -186,7 +186,7 @@ $time_id = $time_data->time_id;
 												<div class="col-md-5" >
 												<label for="time" style="margin-left: 40px;">Time:  </label>
 												<div class="form-group">
-													<input type="text" class="form-control" name="settle_date" style="width: 220px; height: 30px; margin-left: 40px; outline: none; border: 0;" id="set_date" value="<?php echo $day_time; ?>">
+													<input type="text" class="form-control" name="settle_date" style="width: 220px; height: 30px; margin-left: 40px; outline: none; border: 0;" value="<?php echo $day_time;?>">
 												</div>
 												<div class="form-group">
 													<input type="hidden" name="time_id" class="form-control" style="width: 70px; height: 40px;" value="<?php echo $time_id; ?>">
@@ -212,7 +212,7 @@ $time_id = $time_data->time_id;
 								</div>
 							</div>
 						</div>
-					</div>
+					</div>                      
 				</div>
 			</form>
 		</div>		
